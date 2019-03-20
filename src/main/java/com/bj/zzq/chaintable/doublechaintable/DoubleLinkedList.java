@@ -1,0 +1,111 @@
+package com.bj.zzq.chaintable.doublechaintable;
+
+import com.bj.zzq.chaintable.doublechaintable.Link;
+
+/**
+ * @Author: zhaozhiqiang
+ * @Date: 2019/3/20
+ * @Description: 双向链表
+ */
+public class DoubleLinkedList {
+    private Link first;
+    private Link last;
+
+    /**
+     * 在表头插入节点
+     *
+     * @param iData
+     * @param dData
+     */
+    public void insertFirst(int iData, double dData) {
+        Link link = new Link();
+        link.setiData(iData);
+        link.setdData(dData);
+        if (isEmpty()) {
+            last = link;
+        } else {
+            first.setPrev(link);
+        }
+        link.setNext(first);
+        first = link;
+    }
+
+    public void insertLast(int iData, double dData) {
+        Link link = new Link();
+        link.setiData(iData);
+        link.setdData(dData);
+        if (isEmpty()) {
+            first = link;
+        } else {
+            last.setNext(link);
+        }
+        link.setPrev(last);
+        last = link;
+    }
+
+    public void insertAfter(int iData, double dData) {
+        Link link = new Link();
+        link.setiData(iData);
+        link.setdData(dData);
+        if (isEmpty()) {
+            first = link;
+        } else {
+            last.setNext(link);
+        }
+        link.setPrev(last);
+        last = link;
+    }
+
+
+    /**
+     * 从表头删除节点
+     *
+     * @return
+     */
+    public Link deleteFirst() {
+        if (isEmpty()) {
+            throw new IllegalStateException("链表为空，不能删除");
+        }
+        Link next = first.getNext();
+        Link temp = first;
+        first = next;
+
+        if (next == null) {
+            last = null;
+        } else {
+            next.setPrev(null);
+        }
+        return temp;
+    }
+
+    public Link deleteLast() {
+        if (isEmpty()) {
+            throw new IllegalStateException("链表为空，不能删除");
+        }
+        Link temp = last;
+        Link prev = last.getPrev();
+        last = prev;
+        if (prev == null) {
+            first = null;
+        } else {
+            prev.setNext(null);
+        }
+
+        return temp;
+    }
+
+    /**
+     * 是否为空
+     *
+     * @return
+     */
+    public boolean isEmpty() {
+        return first == null;
+    }
+
+
+    public static void main(String[] args) {
+
+
+    }
+}
