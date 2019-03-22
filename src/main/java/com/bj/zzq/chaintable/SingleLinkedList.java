@@ -122,6 +122,18 @@ public class SingleLinkedList {
         }
     }
 
+    public Link getFirst() {
+        return first;
+    }
+
+    public void setFirst(Link first) {
+        this.first = first;
+    }
+
+    public ListIterator iterator() {
+        return new ListIterator(this);
+    }
+
     public static void main(String[] args) {
         SingleLinkedList list = new SingleLinkedList();
         list.insertFirst(1, 1.1);

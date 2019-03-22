@@ -190,15 +190,16 @@ public class DoubleLinkedList {
         this.first = first;
     }
 
+
     public static void main(String[] args) {
         DoubleLinkedList list = new DoubleLinkedList();
-        list.insertFirst(22,22);
-        list.insertFirst(44,44);
-        list.insertFirst(66,66);
+        list.insertFirst(22, 22);
+        list.insertFirst(44, 44);
+        list.insertFirst(66, 66);
 
-        list.insertLast(11,11);
-        list.insertLast(33,33);
-        list.insertLast(55,55);
+        list.insertLast(11, 11);
+        list.insertLast(33, 33);
+        list.insertLast(55, 55);
 
         list.displayForward();
         list.displayBackward();
@@ -209,8 +210,8 @@ public class DoubleLinkedList {
 
         list.displayForward();
 
-        list.insertAfter(22,77,77);
-        list.insertAfter(33,77,77);
+        list.insertAfter(22, 77, 77);
+        list.insertAfter(33, 77, 77);
 
         list.displayForward();
 
