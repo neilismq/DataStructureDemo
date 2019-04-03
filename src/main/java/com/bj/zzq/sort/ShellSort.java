@@ -9,15 +9,25 @@ import java.util.Random;
  * @Description: 希尔排序
  */
 public class ShellSort {
-    private int n;//增量
     private long[] target;
 
-    public void setTarget(long[] target, int n) {
-        this.n = n;
+    public void setTarget(long[] target) {
         this.target = target;
     }
 
     public void sort() {
+        int h = 1;
+        while (h < target.length) {
+            h = 3 * h + 1;
+        }
+        while (h > 1) {
+            h = (h - 1) / 3;
+            insertNOrder(h);
+        }
+
+    }
+
+    private void insertNOrder(int n) {
         for (int i = 0; i < n; i++) {
             for (int k = i; k < target.length; k = k + n) {
                 long temp = target[k];
@@ -32,21 +42,9 @@ public class ShellSort {
                 target[j + n] = temp;
             }
         }
+        System.out.println("h=" + n);
         display();
-        for (int i = 0; i < target.length; i++) {
-            long temp = target[i];
-            int j;
-            for (j = i - 1; j >= 0; j--) {
-                if (temp < target[j]) {
-                    target[j + 1] = target[j];
-                } else {
-                    break;
-                }
-            }
-            target[j + 1] = temp;
-        }
         System.out.println();
-        display();
     }
 
     public void display() {
@@ -56,13 +54,13 @@ public class ShellSort {
     }
 
     public static void main(String[] args) {
-        long[] longs = new long[10];
+        long[] longs = new long[100];
         Random random = new Random();
         for (int i = 0; i < longs.length; i++) {
-            longs[i] = random.nextInt(10);
+            longs[i] = random.nextInt(100);
         }
         ShellSort shellSort = new ShellSort();
-        shellSort.setTarget(longs, 4);
+        shellSort.setTarget(longs);
         shellSort.sort();
     }
 }
