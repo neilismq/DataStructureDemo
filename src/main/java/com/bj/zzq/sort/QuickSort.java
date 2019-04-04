@@ -19,8 +19,14 @@ public class QuickSort {
         recQuickSort(0, target.length - 1);
     }
 
+
     public void recQuickSort(int left, int right) {
         int size = right - left + 1;
+        //此处不必拘泥于3。处理小划分的另外一种方法是采用插入排序，可以把界限设置为10，20等。Knuth推荐使用9作为切割点
+        //重点：在小数组中使用插入排序被证实是最快的一种排序方法（例如小于10中）【JAVA数据结构与算法P269】
+//        if (size < 10) {
+//            insertSort(left, right);
+//        }
         if (size > 3) {
             int pivot = middle3(left, right);
             int middle = partitionIt(left, right, pivot);
@@ -28,6 +34,21 @@ public class QuickSort {
             recQuickSort(middle + 1, right);
         } else {
             manualSort(left, right);
+        }
+    }
+
+    private void insertSort(int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            int temp = target[i];
+            int j;
+            for (j = i - 1; j >= 0; j--) {
+                if (temp < target[j]) {
+                    target[j + 1] = target[j];
+                } else {
+                    break;
+                }
+            }
+            target[j + 1] = temp;
         }
     }
 
