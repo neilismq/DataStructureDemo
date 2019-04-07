@@ -8,16 +8,15 @@ import java.util.Random;
  * @Date: 2019/4/3
  * @Description: 快速排序
  */
-public class QuickSort {
+public class QuickSortWithSmall3Hand {
     private Integer[] target;
 
-    public QuickSort(Integer[] target) {
+    public QuickSortWithSmall3Hand(Integer[] target) {
         this.target = target;
     }
 
     public void sort() {
         recQuickSort(0, target.length - 1);
-        insertSort(0, target.length - 1);
     }
 
 
@@ -28,11 +27,13 @@ public class QuickSort {
 //        if (size < 10) {
 //            insertSort(left, right);
 //        }
-        if (size > 9) {
+        if (size > 3) {
             int pivot = middle3(left, right);
             int middle = partitionIt(left, right, pivot);
             recQuickSort(left, middle - 1);
             recQuickSort(middle + 1, right);
+        } else {
+            manualSort(left, right);
         }
     }
 
@@ -131,7 +132,7 @@ public class QuickSort {
     public void display() {
         System.out.println();
         for (int i = 0; i < target.length; i++) {
-            System.out.print(target[i] + ",");
+            System.out.print(target[i] + " ");
         }
     }
 
@@ -142,7 +143,7 @@ public class QuickSort {
         for (int i = 0; i < 13; i++) {
             list.add(random.nextInt(100));
         }
-        QuickSort quickSort = new QuickSort(list.toArray(new Integer[]{}));
+        QuickSortWithSmall3Hand quickSort = new QuickSortWithSmall3Hand(list.toArray(new Integer[]{}));
         quickSort.display();
         quickSort.sort();
         quickSort.display();

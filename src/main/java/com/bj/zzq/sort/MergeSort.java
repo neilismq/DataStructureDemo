@@ -8,25 +8,22 @@ import java.util.Random;
  * @Description: 归并排序
  */
 public class MergeSort {
-    private long[] workSpace;//中间数组
-    private long[] origin;//原数组
+    private Integer[] workSpace;//中间数组
+    private Integer[] origin;//原数组
     private int nums;
 
-    public MergeSort(int max) {
-        origin = new long[max];
+    public void setTarget(Integer[] origin) {
+        this.origin = origin;
+        this.nums = origin.length;
     }
 
-    public void insert(long item) {
-        origin[nums++] = item;
-    }
-
-    public void mergeSort() {
-        workSpace = new long[nums];
+    public void sort() {
+        workSpace = new Integer[nums];
         merge(workSpace, 0, nums - 1);
     }
 
 
-    public void merge(long[] workSpace, int start, int end) {
+    public void merge(Integer[] workSpace, int start, int end) {
         if (end == start) {
             return;
         }
@@ -46,7 +43,7 @@ public class MergeSort {
     }
 
     //合并两个有序数组
-    private void recMerge(long[] workSpace, int start, int mid, int end) {
+    private void recMerge(Integer[] workSpace, int start, int mid, int end) {
         // start - mid
         //mid+1 - end
         int j = 0;
@@ -72,18 +69,4 @@ public class MergeSort {
             origin[start + j] = workSpace[start + j];
         }
     }
-
-    public static void main(String[] args) {
-        MergeSort sort = new MergeSort(100);
-        Random random = new Random();
-        for (int i = 0; i < 20; i++) {
-            sort.insert(random.nextInt(100));
-        }
-        sort.display();
-        sort.mergeSort();
-        sort.display();
-
-
-    }
-
 }

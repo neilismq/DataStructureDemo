@@ -1,6 +1,6 @@
 package com.bj.zzq.sort;
 
-import java.lang.annotation.Target;
+
 import java.util.Random;
 
 /**
@@ -9,9 +9,9 @@ import java.util.Random;
  * @Description: 希尔排序
  */
 public class ShellSort {
-    private long[] target;
+    private Integer[] target;
 
-    public void setTarget(long[] target) {
+    public void setTarget(Integer[] target) {
         this.target = target;
     }
 
@@ -24,13 +24,12 @@ public class ShellSort {
             h = (h - 1) / 3;
             insertNOrder(h);
         }
-
     }
 
     private void insertNOrder(int n) {
         for (int i = 0; i < n; i++) {
             for (int k = i; k < target.length; k = k + n) {
-                long temp = target[k];
+                int temp = target[k];
                 int j;
                 for (j = k - n; j >= i; j = j - n) {
                     if (temp < target[j]) {
@@ -42,25 +41,27 @@ public class ShellSort {
                 target[j + n] = temp;
             }
         }
-        System.out.println("h=" + n);
-        display();
-        System.out.println();
+//        System.out.println("h=" + n);
+//        display();
+//        System.out.println();
     }
 
     public void display() {
+        System.out.println();
         for (int i = 0; i < target.length; i++) {
-            System.out.print(target[i] + ",");
+            System.out.print(target[i] + " ");
         }
     }
 
     public static void main(String[] args) {
-        long[] longs = new long[100];
+        Integer[] integers = new Integer[15];
         Random random = new Random();
-        for (int i = 0; i < longs.length; i++) {
-            longs[i] = random.nextInt(100);
+        for (int i = 0; i < 15; i++) {
+            integers[i] = random.nextInt(100);
         }
-        ShellSort shellSort = new ShellSort();
-        shellSort.setTarget(longs);
-        shellSort.sort();
+        QuickSortWithSmall9Insert insertSort = new QuickSortWithSmall9Insert(integers);
+        insertSort.display();
+        insertSort.sort();
+        insertSort.display();
     }
 }

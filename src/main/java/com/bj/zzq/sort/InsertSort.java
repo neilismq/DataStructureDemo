@@ -38,29 +38,4 @@ public class InsertSort {
         System.out.println();
     }
 
-    public static void main(String[] args) {
-        InsertSort insertSort = new InsertSort();
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        Random random = new Random();
-        for (int i = 0; i < 100; i++) {
-            list.add(random.nextInt(100));
-        }
-        insertSort.setTarget(list.toArray(new Integer[]{}));
-        insertSort.display();
-        long start = System.nanoTime();
-        insertSort.sort();
-        long end = System.nanoTime();
-        insertSort.display();
-        System.out.println("插入排序花费" + (end - start) + "纳秒");
-        MergeSort mergeSort = new MergeSort(100);
-        for (int i = 0; i < 100; i++) {
-            mergeSort.insert(random.nextInt(100));
-        }
-        long startMerge = System.nanoTime();
-        mergeSort.mergeSort();
-        long endMerge= System.nanoTime();
-        System.out.println("归并排序花费" + (endMerge - startMerge) + "纳秒");
-        mergeSort.display();
-
-    }
 }

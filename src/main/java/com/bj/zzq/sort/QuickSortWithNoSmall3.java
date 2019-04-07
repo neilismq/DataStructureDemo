@@ -8,10 +8,10 @@ import java.util.Random;
  * @Date: 2019/4/3
  * @Description: 快速排序
  */
-public class QuickSort {
+public class QuickSortWithNoSmall3 {
     private Integer[] target;
 
-    public QuickSort(Integer[] target) {
+    public QuickSortWithNoSmall3(Integer[] target) {
         this.target = target;
     }
 
@@ -21,14 +21,14 @@ public class QuickSort {
     }
 
 
-    public void recQuickSort(int left, int right) {
+    private void recQuickSort(int left, int right) {
         int size = right - left + 1;
         //此处不必拘泥于3。处理小划分的另外一种方法是采用插入排序，可以把界限设置为10，20等。Knuth推荐使用9作为切割点
         //重点：在小数组中使用插入排序被证实是最快的一种排序方法（例如小于10中）【JAVA数据结构与算法P269】
 //        if (size < 10) {
 //            insertSort(left, right);
 //        }
-        if (size > 9) {
+        if (size > 3) {
             int pivot = middle3(left, right);
             int middle = partitionIt(left, right, pivot);
             recQuickSort(left, middle - 1);
@@ -131,7 +131,7 @@ public class QuickSort {
     public void display() {
         System.out.println();
         for (int i = 0; i < target.length; i++) {
-            System.out.print(target[i] + ",");
+            System.out.print(target[i] + " ");
         }
     }
 
@@ -142,7 +142,7 @@ public class QuickSort {
         for (int i = 0; i < 13; i++) {
             list.add(random.nextInt(100));
         }
-        QuickSort quickSort = new QuickSort(list.toArray(new Integer[]{}));
+        QuickSortWithNoSmall3 quickSort = new QuickSortWithNoSmall3(list.toArray(new Integer[]{}));
         quickSort.display();
         quickSort.sort();
         quickSort.display();
