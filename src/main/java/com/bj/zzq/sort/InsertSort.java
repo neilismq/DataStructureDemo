@@ -8,13 +8,15 @@ import java.util.Random;
  * @Date: 2019/4/2
  * @Description: 插入排序
  */
-public class InsertSort {
+public class InsertSort extends Sort {
     private Integer[] target;
 
+    @Override
     public void setTarget(Integer[] target) {
         this.target = target;
     }
 
+    @Override
     public void sort() {
         for (int i = 0; i < target.length; i++) {
             int temp = target[i];

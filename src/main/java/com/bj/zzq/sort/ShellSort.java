@@ -8,13 +8,15 @@ import java.util.Random;
  * @Date: 2019/4/2
  * @Description: 希尔排序
  */
-public class ShellSort {
+public class ShellSort extends Sort {
     private Integer[] target;
 
+    @Override
     public void setTarget(Integer[] target) {
         this.target = target;
     }
 
+    @Override
     public void sort() {
         int h = 1;
         while (h < target.length) {
@@ -53,15 +55,4 @@ public class ShellSort {
         }
     }
 
-    public static void main(String[] args) {
-        Integer[] integers = new Integer[15];
-        Random random = new Random();
-        for (int i = 0; i < 15; i++) {
-            integers[i] = random.nextInt(100);
-        }
-        QuickSortWithSmall9Insert insertSort = new QuickSortWithSmall9Insert(integers);
-        insertSort.display();
-        insertSort.sort();
-        insertSort.display();
-    }
 }

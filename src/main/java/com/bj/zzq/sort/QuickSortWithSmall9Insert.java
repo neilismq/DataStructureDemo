@@ -8,13 +8,15 @@ import java.util.Random;
  * @Date: 2019/4/3
  * @Description: 快速排序
  */
-public class QuickSortWithSmall9Insert {
+public class QuickSortWithSmall9Insert extends Sort {
     private Integer[] target;
 
-    public QuickSortWithSmall9Insert(Integer[] target) {
+    @Override
+    public void setTarget(Integer[] target) {
         this.target = target;
     }
 
+    @Override
     public void sort() {
         recQuickSort(0, target.length - 1);
     }
@@ -136,16 +138,4 @@ public class QuickSortWithSmall9Insert {
         }
     }
 
-    public static void main(String[] args) {
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        Random random = new Random();
-
-        for (int i = 0; i < 13; i++) {
-            list.add(random.nextInt(100));
-        }
-        QuickSortWithSmall9Insert quickSort = new QuickSortWithSmall9Insert(list.toArray(new Integer[]{}));
-        quickSort.display();
-        quickSort.sort();
-        quickSort.display();
-    }
 }

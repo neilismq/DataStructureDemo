@@ -7,16 +7,18 @@ import java.util.Random;
  * @Date: 2019/3/27
  * @Description: 归并排序
  */
-public class MergeSort {
+public class MergeSort extends Sort {
     private Integer[] workSpace;//中间数组
     private Integer[] origin;//原数组
     private int nums;
 
+    @Override
     public void setTarget(Integer[] origin) {
         this.origin = origin;
         this.nums = origin.length;
     }
 
+    @Override
     public void sort() {
         workSpace = new Integer[nums];
         merge(workSpace, 0, nums - 1);
