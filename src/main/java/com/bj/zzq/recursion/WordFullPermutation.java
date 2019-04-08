@@ -1,6 +1,4 @@
-package com.bj.zzq.example;
-
-import java.util.Queue;
+package com.bj.zzq.recursion;
 
 /**
  * @Author: zhaozhiqiang

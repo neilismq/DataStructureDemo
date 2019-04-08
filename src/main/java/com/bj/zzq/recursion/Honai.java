@@ -1,4 +1,4 @@
-package com.bj.zzq.example;
+package com.bj.zzq.recursion;
 
 import java.util.HashMap;
 import java.util.Map;

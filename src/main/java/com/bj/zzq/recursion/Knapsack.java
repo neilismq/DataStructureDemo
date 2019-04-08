@@ -1,4 +1,4 @@
-package com.bj.zzq.example;
+package com.bj.zzq.recursion;
 
 import java.util.ArrayList;
 import java.util.List;
