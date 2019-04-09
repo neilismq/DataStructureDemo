@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : localhost
+ Source Server         : 本机mysql
  Source Server Type    : MySQL
- Source Server Version : 80011
+ Source Server Version : 50641
  Source Host           : localhost:3306
  Source Schema         : test
 
  Target Server Type    : MySQL
- Target Server Version : 80011
+ Target Server Version : 50641
  File Encoding         : 65001
 
- Date: 08/04/2019 22:19:06
+ Date: 09/04/2019 17:49:10
 */
 
 SET NAMES utf8mb4;
@@ -23,10 +23,10 @@ SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `algorithm`;
 CREATE TABLE `algorithm`  (
   `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `algorithm_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '算法类型 1-快速排序 2-希尔排序 3-归并排序 4-插入排序',
-  `mark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '算法说明',
+  `algorithm_type` char(1) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '算法类型 1-快速排序 2-希尔排序 3-归并排序 4-插入排序 5-基数排序',
+  `mark` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '算法说明',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of algorithm
@@ -38,5 +38,6 @@ INSERT INTO `algorithm` VALUES (4, '1', '快排,n<=3时，对于小划分使用�
 INSERT INTO `algorithm` VALUES (5, '1', '快排,n<=9时，对于小划分使用插入排序');
 INSERT INTO `algorithm` VALUES (6, '1', '快排,n<=3时，对于小划分不处理，最后统一使用插入排序');
 INSERT INTO `algorithm` VALUES (7, '1', '快排,n<=9时，对于小划分不处理，最后统一使用插入排序');
+INSERT INTO `algorithm` VALUES (8, '5', '基数排序，基数为10,位数为Integer.MAX_VALUE的位数');
 
 SET FOREIGN_KEY_CHECKS = 1;

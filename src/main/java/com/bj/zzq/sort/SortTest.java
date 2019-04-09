@@ -14,6 +14,8 @@ public class SortTest {
         MergeSort mergeSort = new MergeSort();
         ShellSort shellSort = new ShellSort();
         QuickSort quickSort = new QuickSort();
+        CardinalSort cardinalSort = new CardinalSort();
+        cardinalSort.setCardinalNum(10);
         QuickSortWithNoSmall3 quickSortWithNoSmall3 = new QuickSortWithNoSmall3();
         QuickSortWithSmall3Hand quickSortWithSmall3Hand = new QuickSortWithSmall3Hand();
         QuickSortWithSmall9Insert quickSortWithSmall9Insert = new QuickSortWithSmall9Insert();
@@ -22,9 +24,13 @@ public class SortTest {
         for (int i = 10; i < 100000000; i = i * 10) {
             for (int k = 0; k < 100; k++) {
                 Integer[] origin = new Integer[i];
+                long createDataStart = System.nanoTime();
                 for (int j = 0; j < i; j++) {
-                    origin[j] = random.nextInt(100000000);
+                    origin[j] = random.nextInt(Integer.MAX_VALUE);
                 }
+                long createDataEnd = System.nanoTime();
+                System.out.println("造" + i + "个数据共花费" + (createDataEnd - createDataStart) + "纳秒");
+                doSomething(cardinalSort, 8, origin);
                 doSomething(insertSort, 2, origin);
                 doSomething(shellSort, 3, origin);
                 doSomething(mergeSort, 1, origin);
@@ -63,7 +69,7 @@ public class SortTest {
     private static Connection getConnection() {
         if (conn == null) {
             try {
-                Class.forName("com.mysql.cj.jdbc.Driver");
+                Class.forName("com.mysql.jdbc.Driver");
                 String url = "jdbc:mysql://localhost:3306/test?characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8";
                 String username = "root";
                 String password = "admin";

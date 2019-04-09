@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * @Date: 2019/4/8
  * @Description: 基数排序
  */
-public class CardinalSort {
+public class CardinalSort extends Sort {
     private int cardinalNum;//基数
     private Integer[] target;//原数组
     private LinkedList<Integer>[] tempList;
