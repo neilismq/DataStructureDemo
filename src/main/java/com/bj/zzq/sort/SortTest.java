@@ -14,6 +14,7 @@ public class SortTest {
         MergeSort mergeSort = new MergeSort();
         ShellSort shellSort = new ShellSort();
         QuickSort quickSort = new QuickSort();
+        QuickSortSimple quickSortSimple = new QuickSortSimple();
         CardinalSort cardinalSort = new CardinalSort();
         cardinalSort.setCardinalNum(10);
         QuickSortWithNoSmall3 quickSortWithNoSmall3 = new QuickSortWithNoSmall3();
@@ -21,8 +22,8 @@ public class SortTest {
         QuickSortWithSmall9Insert quickSortWithSmall9Insert = new QuickSortWithSmall9Insert();
 
         Random random = new Random();
-        for (int i = 10; i < 100000000; i = i * 10) {
-            for (int k = 0; k < 100; k++) {
+        for (int i = 100000000; i < 1000000000; i = i * 10) {
+            for (int k = 0; k < 2; k++) {
                 Integer[] origin = new Integer[i];
                 long createDataStart = System.nanoTime();
                 for (int j = 0; j < i; j++) {
@@ -30,14 +31,16 @@ public class SortTest {
                 }
                 long createDataEnd = System.nanoTime();
                 System.out.println("造" + i + "个数据共花费" + (createDataEnd - createDataStart) + "纳秒");
-                doSomething(cardinalSort, 8, origin);
-                doSomething(insertSort, 2, origin);
-                doSomething(shellSort, 3, origin);
-                doSomething(mergeSort, 1, origin);
-                doSomething(quickSort, 7, origin);
-                doSomething(quickSortWithNoSmall3, 6, origin);
-                doSomething(quickSortWithSmall3Hand, 4, origin);
-                doSomething(quickSortWithSmall9Insert, 5, origin);
+
+                doSomething(quickSortSimple, 10, origin);
+//                doSomething(cardinalSort, 8, origin);
+//                doSomething(insertSort, 2, origin);
+//                doSomething(shellSort, 3, origin);
+//                doSomething(mergeSort, 1, origin);
+//                doSomething(quickSort, 7, origin);
+//                doSomething(quickSortWithNoSmall3, 6, origin);
+//                doSomething(quickSortWithSmall3Hand, 4, origin);
+//                doSomething(quickSortWithSmall9Insert, 5, origin);
             }
         }
 
@@ -48,7 +51,7 @@ public class SortTest {
 
     private static void doSomething(Sort sort, int algorithmType, Integer[] origin) {
         try {
-            sort.setTarget(copyArray(origin));
+            sort.setTarget(origin);
             long start = System.nanoTime();
             sort.sort();
             long end = System.nanoTime();
