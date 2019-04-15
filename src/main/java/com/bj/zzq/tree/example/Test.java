@@ -7,8 +7,9 @@ package com.bj.zzq.tree.example;
  */
 public class Test {
     public static void main(String[] args) throws Throwable {
+        System.out.println(Integer.valueOf("1100011101",2));
         byte[] data = new byte[12]; //测试数据准备，假设LZ所说的串是保存在byte数组中
-        data[0] = Integer.valueOf("00011101", 2).byteValue(); //头3个数据用LZ的例子数据
+        data[0] = Integer.valueOf("1100011101", 2).byteValue(); //头3个数据用LZ的例子数据
         data[1] = Integer.valueOf("11000011", 2).byteValue();
         data[2] = Integer.valueOf("11000011", 2).byteValue();
         for (int i = 3; i < data.length; i++) { //有规律的数据方便检验程序的正确性
