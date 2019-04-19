@@ -88,16 +88,16 @@ public class RBTree {
                             reverseColor(g);
                             rotateL(g);
                         } else if (isLeftNodeOfParent(p) && !isLeftNodeOfParent(current)) {
-                            //如果p是g的左子节点，current是p的右子节点，先变换current和g的颜色，然后先以x为顶点左旋，然后以g为顶点右旋
+                            //如果p是g的左子节点，current是p的右子节点，先变换current和g的颜色，然后先以p为顶点左旋，然后以g为顶点右旋
                             reverseColor(current);
                             reverseColor(g);
-                            rotateL(current);
+                            rotateL(p);
                             rotateR(g);
                         } else {
-                            //如果p是g的右子节点，current是p的左子节点，先变换current和g的颜色，然后先以x为顶点右旋，然后以g为顶点左旋
+                            //如果p是g的右子节点，current是p的左子节点，先变换current和g的颜色，然后先以p为顶点右旋，然后以g为顶点左旋
                             reverseColor(current);
                             reverseColor(g);
-                            rotateR(current);
+                            rotateR(p);
                             rotateL(g);
                         }
                     }
@@ -150,13 +150,13 @@ public class RBTree {
                     reverseColor(g);
                     rotateL(g);
                 } else if (isLeftNodeOfParent(p) && !isLeftNodeOfParent(current)) {
-                    //如果p是g的左子节点，current是p的右子节点，先变换current和g的颜色，然后先以x为顶点左旋，然后以g为顶点右旋
+                    //如果p是g的左子节点，current是p的右子节点，先变换current和g的颜色，然后先以p为顶点左旋，然后以g为顶点右旋
                     reverseColor(current);
                     reverseColor(g);
                     rotateL(p);
                     rotateR(g);
                 } else {
-                    //如果p是g的右子节点，current是p的左子节点，先变换current和g的颜色，然后先以x为顶点右旋，然后以g为顶点左旋
+                    //如果p是g的右子节点，current是p的左子节点，先变换current和g的颜色，然后先以p为顶点右旋，然后以g为顶点左旋
                     reverseColor(current);
                     reverseColor(g);
                     rotateR(p);
@@ -167,22 +167,13 @@ public class RBTree {
         }
     }
 
-    /**
-     * 是否有子节点
-     *
-     * @param node
-     * @return
-     */
-    public boolean hasChild(Node node) {
-        return node.left != null || node.right != null;
-    }
 
     /**
      * 交换颜色。只有当当前节点是黑色，并且两个子节点都是红色时，将当前节点变为红色，两个子节点变为黑色。
      *
      * @param node
      */
-    public void exchangeColor(Node node) {
+    private void exchangeColor(Node node) {
         if (node != root) {
             //不是根节点才能变红色
             node.isRed = true;
@@ -196,7 +187,7 @@ public class RBTree {
      *
      * @param node
      */
-    public void reverseColor(Node node) {
+    private void reverseColor(Node node) {
         node.isRed = !node.isRed;
     }
 
@@ -206,7 +197,7 @@ public class RBTree {
      * @param node 当前节点
      * @return
      */
-    public boolean isLeftNodeOfParent(Node node) {
+    private boolean isLeftNodeOfParent(Node node) {
         Node p = node.parent;
         return node == p.left;
     }
@@ -216,7 +207,7 @@ public class RBTree {
      *
      * @param node 顶点
      */
-    public void rotateL(Node node) {
+    private void rotateL(Node node) {
         //父节点
         Node p = node.parent;
         //右子节点
@@ -239,7 +230,7 @@ public class RBTree {
         if (rl != null) {
             rl.parent = node;
         }
-        node.left = rl;
+        node.right = rl;
         //如果以根为顶点
         if (node == root) {
             root = r;
@@ -252,7 +243,7 @@ public class RBTree {
      *
      * @param node 顶点
      */
-    public void rotateR(Node node) {
+    private void rotateR(Node node) {
         //父节点
         Node p = node.parent;
         //左子节点
@@ -290,7 +281,7 @@ public class RBTree {
         Double pow = Math.pow(2, maxDepth());
         int blankNums = pow.intValue();
         boolean rowIsEmpty = false;
-        System.out.println("*****************start display tree******************");
+        System.out.println("***************** start display tree ******************");
         while (!rowIsEmpty) {
             for (int i = 0; i < blankNums; i++) {
                 System.out.print(" ");
@@ -321,7 +312,7 @@ public class RBTree {
                 globalStack.push(tempStack.pop());
             }
         }
-        System.out.println("**********************display tree end****************");
+        System.out.println("**************** end display tree ****************");
     }
 
     static final class Node {
@@ -330,7 +321,6 @@ public class RBTree {
         Node left;
         Node right;
         Node parent;
-
         Node(int iData) {
             this.iData = iData;
         }
@@ -344,20 +334,18 @@ public class RBTree {
         tree.displayTree();
         tree.insert(new Node(75));
         tree.displayTree();
+        tree.insert(new Node(12));
+        tree.displayTree();
+        tree.insert(new Node(18));
+        tree.displayTree();
         tree.insert(new Node(15));
+        tree.displayTree();
+        tree.insert(new Node(11));
         tree.displayTree();
         tree.insert(new Node(10));
         tree.displayTree();
-        tree.insert(new Node(7));
-        tree.displayTree();
-        tree.insert(new Node(6));
-        tree.displayTree();
-        tree.insert(new Node(5));
-        tree.displayTree();
-        tree.insert(new Node(4));
-        tree.displayTree();
-        tree.insert(new Node(3));
-        tree.displayTree();
+
+
 
     }
 }
