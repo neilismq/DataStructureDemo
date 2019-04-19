@@ -66,7 +66,7 @@ public class RBTree {
                 if (!current.isRed && current.left != null && current.right != null && current.left.isRed && current.right.isRed) {
                     exchangeColor(current);
                     //判断当前节点和父节点是否有红-红冲突，有的话解决掉它！
-                    if (current.parent != null && current.isRed) {
+                    if (current.parent != null && current.parent.isRed) {
                         //解决红-红冲突
                         //todo:找结构
                         //父节点
@@ -153,13 +153,13 @@ public class RBTree {
                     //如果p是g的左子节点，current是p的右子节点，先变换current和g的颜色，然后先以x为顶点左旋，然后以g为顶点右旋
                     reverseColor(current);
                     reverseColor(g);
-                    rotateL(current);
+                    rotateL(p);
                     rotateR(g);
                 } else {
                     //如果p是g的右子节点，current是p的左子节点，先变换current和g的颜色，然后先以x为顶点右旋，然后以g为顶点左旋
                     reverseColor(current);
                     reverseColor(g);
-                    rotateR(current);
+                    rotateR(p);
                     rotateL(g);
                 }
             }
@@ -197,10 +197,7 @@ public class RBTree {
      * @param node
      */
     public void reverseColor(Node node) {
-        //根总是黑色的
-        if (node != root) {
-            node.isRed = !node.isRed;
-        }
+        node.isRed = !node.isRed;
     }
 
     /**
@@ -241,11 +238,12 @@ public class RBTree {
         node.parent = r;
         if (rl != null) {
             rl.parent = node;
-            node.left = rl;
         }
+        node.left = rl;
         //如果以根为顶点
         if (node == root) {
             root = r;
+            root.isRed=false;
         }
     }
 
@@ -273,11 +271,13 @@ public class RBTree {
         node.parent = l;
         if (lr != null) {
             lr.parent = node;
-            node.left = lr;
         }
+        //这个地方要注意，没有lr时也要置为空
+        node.left = lr;
         //如果以根为顶点
         if (node == root) {
             root = l;
+            root.isRed=false;
         }
     }
 
@@ -347,10 +347,15 @@ public class RBTree {
         tree.insert(new Node(15));
         tree.displayTree();
         tree.insert(new Node(10));
+        tree.displayTree();
         tree.insert(new Node(7));
+        tree.displayTree();
         tree.insert(new Node(6));
+        tree.displayTree();
         tree.insert(new Node(5));
+        tree.displayTree();
         tree.insert(new Node(4));
+        tree.displayTree();
         tree.insert(new Node(3));
         tree.displayTree();
 
