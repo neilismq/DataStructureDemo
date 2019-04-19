@@ -1,5 +1,8 @@
 package com.bj.zzq.tree;
 
+import com.sun.deploy.net.cookie.CookieUnavailableException;
+
+import java.util.HashMap;
 import java.util.Stack;
 
 /**
@@ -50,7 +53,232 @@ public class RBTree {
     }
 
     public void insert(Node newNode) {
+        newNode.isRed = true;
+        if (root == null) {
+            //根节点为空时，插入根节点
+            root = newNode;
+            root.isRed = false;
+        } else {
+            //根节点不为空时，向下搜寻插入点
+            Node current = root;
+            //有子节点,说明还未找到插入点，在下行路上
+            while (current != null) {
+                if (!current.isRed && current.left != null && current.right != null && current.left.isRed && current.right.isRed) {
+                    exchangeColor(current);
+                    //判断当前节点和父节点是否有红-红冲突，有的话解决掉它！
+                    if (current.parent != null && current.isRed) {
+                        //解决红-红冲突
+                        //todo:找结构
+                        //父节点
+                        Node p = current.parent;
+                        //祖父节点,祖父节点肯定是黑色的。
+                        Node g = p.parent;
+                        //左子节点
+                        Node l = current.left;
+                        //右子节点
+                        Node r = current.right;
+                        if (isLeftNodeOfParent(p) && isLeftNodeOfParent(current)) {
+                            //如果p是g的左子节点，current是p的左子节点,先变换p和g的颜色，然后以g为顶点右旋
+                            reverseColor(p);
+                            reverseColor(g);
+                            rotateR(g);
+                        } else if (!isLeftNodeOfParent(p) && !isLeftNodeOfParent(current)) {
+                            //如果p是g的右子节点，current是p的右子节点，先变换p和g的颜色，然后以g为顶点左旋
+                            reverseColor(p);
+                            reverseColor(g);
+                            rotateL(g);
+                        } else if (isLeftNodeOfParent(p) && !isLeftNodeOfParent(current)) {
+                            //如果p是g的左子节点，current是p的右子节点，先变换current和g的颜色，然后先以x为顶点左旋，然后以g为顶点右旋
+                            reverseColor(current);
+                            reverseColor(g);
+                            rotateL(current);
+                            rotateR(g);
+                        } else {
+                            //如果p是g的右子节点，current是p的左子节点，先变换current和g的颜色，然后先以x为顶点右旋，然后以g为顶点左旋
+                            reverseColor(current);
+                            reverseColor(g);
+                            rotateR(current);
+                            rotateL(g);
+                        }
+                    }
+                }
 
+                if (newNode.iData == current.iData) {
+                    throw new IllegalArgumentException("不能插入重复值");
+                } else if (newNode.iData > current.iData) {
+                    if (current.right == null) {
+                        break;
+                    }
+                    current = current.right;
+                } else {
+                    if (current.left == null) {
+                        break;
+                    }
+                    current = current.left;
+                }
+            }
+            //不管父节点是啥，先插入再说
+            if (newNode.iData == current.iData) {
+                throw new IllegalArgumentException("不能插入重复值");
+            } else if (newNode.iData > current.iData) {
+                current.right = newNode;
+            } else {
+                current.left = newNode;
+            }
+            newNode.parent = current;
+            current = newNode;
+            //找到了插入点
+            if (current.parent.isRed) {
+                //如果父节点是红色节点，产生红-红冲突
+                //todo:找结构
+                //父节点
+                Node p = current.parent;
+                //祖父节点,祖父节点肯定是黑色的。
+                Node g = p.parent;
+                //左子节点
+                Node l = current.left;
+                //右子节点
+                Node r = current.right;
+                if (isLeftNodeOfParent(p) && isLeftNodeOfParent(current)) {
+                    //如果p是g的左子节点，current是p的左子节点,先变换p和g的颜色，然后以g为顶点右旋
+                    reverseColor(p);
+                    reverseColor(g);
+                    rotateR(g);
+                } else if (!isLeftNodeOfParent(p) && !isLeftNodeOfParent(current)) {
+                    //如果p是g的右子节点，current是p的右子节点，先变换p和g的颜色，然后以g为顶点左旋
+                    reverseColor(p);
+                    reverseColor(g);
+                    rotateL(g);
+                } else if (isLeftNodeOfParent(p) && !isLeftNodeOfParent(current)) {
+                    //如果p是g的左子节点，current是p的右子节点，先变换current和g的颜色，然后先以x为顶点左旋，然后以g为顶点右旋
+                    reverseColor(current);
+                    reverseColor(g);
+                    rotateL(current);
+                    rotateR(g);
+                } else {
+                    //如果p是g的右子节点，current是p的左子节点，先变换current和g的颜色，然后先以x为顶点右旋，然后以g为顶点左旋
+                    reverseColor(current);
+                    reverseColor(g);
+                    rotateR(current);
+                    rotateL(g);
+                }
+            }
+
+        }
+    }
+
+    /**
+     * 是否有子节点
+     *
+     * @param node
+     * @return
+     */
+    public boolean hasChild(Node node) {
+        return node.left != null || node.right != null;
+    }
+
+    /**
+     * 交换颜色。只有当当前节点是黑色，并且两个子节点都是红色时，将当前节点变为红色，两个子节点变为黑色。
+     *
+     * @param node
+     */
+    public void exchangeColor(Node node) {
+        if (node != root) {
+            //不是根节点才能变红色
+            node.isRed = true;
+        }
+        node.left.isRed = false;
+        node.right.isRed = false;
+    }
+
+    /**
+     * 反转节点颜色
+     *
+     * @param node
+     */
+    public void reverseColor(Node node) {
+        //根总是黑色的
+        if (node != root) {
+            node.isRed = !node.isRed;
+        }
+    }
+
+    /**
+     * 判断当前节点是否是父节点的左子节点,假设父节点不为空
+     *
+     * @param node 当前节点
+     * @return
+     */
+    public boolean isLeftNodeOfParent(Node node) {
+        Node p = node.parent;
+        return node == p.left;
+    }
+
+    /**
+     * 左旋,至少有一个右子节点
+     *
+     * @param node 顶点
+     */
+    public void rotateL(Node node) {
+        //父节点
+        Node p = node.parent;
+        //右子节点
+        Node r = node.right;
+        //左子节点
+        Node l = node.left;
+        //右子节点的左子节点
+        Node rl = r.left;
+        if (p != null) {
+            if (isLeftNodeOfParent(node)) {
+                p.left = r;
+            } else {
+                p.right = r;
+            }
+            r.parent = p;
+        }
+
+        r.left = node;
+        node.parent = r;
+        if (rl != null) {
+            rl.parent = node;
+            node.left = rl;
+        }
+        //如果以根为顶点
+        if (node == root) {
+            root = r;
+        }
+    }
+
+    /**
+     * 右旋，至少有一个左子节点
+     *
+     * @param node 顶点
+     */
+    public void rotateR(Node node) {
+        //父节点
+        Node p = node.parent;
+        //左子节点
+        Node l = node.left;
+        //左子节点的右子节点
+        Node lr = l.right;
+        if (p != null) {
+            if (isLeftNodeOfParent(node)) {
+                p.left = l;
+            } else {
+                p.right = l;
+            }
+            l.parent = p;
+        }
+        l.right = node;
+        node.parent = l;
+        if (lr != null) {
+            lr.parent = node;
+            node.left = lr;
+        }
+        //如果以根为顶点
+        if (node == root) {
+            root = l;
+        }
     }
 
     /**
@@ -102,9 +330,29 @@ public class RBTree {
         Node left;
         Node right;
         Node parent;
+
+        Node(int iData) {
+            this.iData = iData;
+        }
     }
 
     public static void main(String[] args) {
+        RBTree tree = new RBTree();
+        tree.insert(new Node(50));
+        tree.displayTree();
+        tree.insert(new Node(25));
+        tree.displayTree();
+        tree.insert(new Node(75));
+        tree.displayTree();
+        tree.insert(new Node(15));
+        tree.displayTree();
+        tree.insert(new Node(10));
+        tree.insert(new Node(7));
+        tree.insert(new Node(6));
+        tree.insert(new Node(5));
+        tree.insert(new Node(4));
+        tree.insert(new Node(3));
+        tree.displayTree();
 
     }
 }
