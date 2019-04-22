@@ -167,6 +167,86 @@ public class RBTree {
         }
     }
 
+    /**
+     * 后继
+     *
+     * @param node 要删除的节点
+     * @return
+     */
+    public Node findSuccessor(Node node) {
+        Node current = node.right;
+        while (current.left != null) {
+            current = current.left;
+        }
+        return current;
+    }
+
+    public boolean delete(int key) {
+        // find delete node
+        Node current = root;
+        while (current != null) {
+            if (current.iData == key) {
+                break;
+            } else if (current.iData < key) {
+                current = current.right;
+            } else {
+                current = current.left;
+            }
+        }
+        if (current == null) {
+            //没找到要删除的节点
+            return false;
+        }
+
+        //查找后继
+        Node successor = findSuccessor(current);
+        //删除节点的左子节点
+        Node dl = current.left;
+        //删除节点的父节点
+        Node dp = current.parent;
+        //后继为空时，也就是删除节点没有右子节点
+        if (successor == null) {
+            //如果删除的是根
+            if (current == root) {
+                if (dl != null) {
+                    dl.isRed = false;
+                    dl.parent = null;
+                }
+                root = dl;
+            } else {
+                //删除节一定是黑色，且它的左子节点一定是红色，只需要把红色节点变为黑色，然后往上替换删除节点就OK
+                //如果删除节点是父节点的左子节点
+                if (isLeftNodeOfParent(current)) {
+                    dp.left = dl;
+                } else {
+                    dp.right = dl;
+                }
+                if (dl != null) {
+                    dl.isRed = false;
+                    dl.parent = dp;
+                }
+                current.left = null;
+                current.parent = null;
+            }
+        } else {
+            //后继不为空时
+            //后继的父节点
+            Node sp = successor.parent;
+            //后继的左子节点
+            Node sl = successor.left;
+            //后继的右子节点
+            Node sr = successor.right;
+            //当后继的父节点和要删除的节相等时，说明后继是删除节点的右子节点，此时后继没有兄弟节点，只需要把
+            if (sp == current) {
+
+            }
+            //后继节点的兄弟节点
+            Node b = null;
+        }
+
+
+    }
+
 
     /**
      * 交换颜色。只有当当前节点是黑色，并且两个子节点都是红色时，将当前节点变为红色，两个子节点变为黑色。
@@ -234,7 +314,7 @@ public class RBTree {
         //如果以根为顶点
         if (node == root) {
             root = r;
-            root.isRed=false;
+            root.isRed = false;
         }
     }
 
@@ -268,7 +348,7 @@ public class RBTree {
         //如果以根为顶点
         if (node == root) {
             root = l;
-            root.isRed=false;
+            root.isRed = false;
         }
     }
 
@@ -321,6 +401,7 @@ public class RBTree {
         Node left;
         Node right;
         Node parent;
+
         Node(int iData) {
             this.iData = iData;
         }
@@ -344,7 +425,6 @@ public class RBTree {
         tree.displayTree();
         tree.insert(new Node(10));
         tree.displayTree();
-
 
 
     }
