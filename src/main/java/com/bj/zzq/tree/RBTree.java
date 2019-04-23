@@ -213,231 +213,265 @@ public class RBTree {
         Node b = null;
         //后继为空时，也就是删除节点没有右子节点
         if (successor == null) {
-            //如果删除的是根
-            if (current == root) {
-                root = dl;
-            } else {
-                //如果后继为空且删除的不是根
+
+            if (current.isRed) {
+                //如果删除节点是红色,删除子节肯定没有子节点，而且被删除的节点肯定不是根，直接删掉就行，啥都不影响
                 if (isLeftNodeOfParent(current)) {
-                    dp.left = dl;
-                    b = dp.right;
+                    dp.left = null;
                 } else {
-                    dp.right = dl;
-                    b = dp.left;
+                    dp.right = null;
                 }
-            }
-
-            if (dl != null) {
-                //如果删除节点的左子节点不为空，那么它必定是黑色的，且dl是红色的。并且dl是没有子节点的。此时只需要把dl替换current即可
-                reverseColor(dl);
-                dl.parent = dp;
+                current.parent = null;
             } else {
-                //如果删除节点的两个子节点都是空
-                //如果当前被删除节点是黑色的
-
-                if (!current.isRed && dl != root) {
-                    reverseColor(dp);
-                    if (isLeftNodeOfParent(b)) {
+                //如果删除节点是黑色,并且current有左子节点（不可能有右子节点）
+                //如果删除节点的左子节点不为空，那么dl一定为红色，并且dl没有子节点，那么改变dl颜色后，把dl补上去即可
+                if (dl != null) {
+                    reverseColor(dl);
+                    if (isLeftNodeOfParent(current)) {
+                        dp.left = dl;
+                    } else {
+                        dp.right = dl;
+                    }
+                    dl.parent = dp;
+                    current.parent = null;
+                    current.left = null;
+                } else {
+                    //如果删除节点没有子节点，先把current断开链接
+                    if (isLeftNodeOfParent(current)) {
+                        dp.left = null;
+                        current.parent = null;
+                        b = dp.right;
+                        //如果兄弟节点b是红色，那么b一定有两个黑色节点，并且dp一定是黑色
                         if (b.isRed) {
-                            //b此时肯定有两个黑色子节点，dp肯定是黑色，先以b为顶点右旋，再dp为顶点左旋
+                            //改变兄弟节点b和兄弟节点的右子节点的颜色，然后以b为顶点右旋，然后以dp为顶点左旋
                             reverseColor(b);
                             reverseColor(b.right);
                             rotateR(b);
                             rotateL(dp);
                         } else {
+                            //如果兄弟节点是黑色,此时current和b都是黑色，注意我们插入的过程，此时dp一定存在
                             if (dp.isRed) {
-                                if (b.right != null) {
-                                    //先右旋再左旋
-                                    rotateL(b);
-                                    rotateR(dp);
-                                } else if (b.left != null) {
-                                    reverseColor(b);
-                                    reverseColor(b.left);
+                                //如果dp是红色，则b至少有一个子节点
+                                if (b.left != null && b.right != null) {
+                                    //改变dp颜色，然后先以b为顶点右旋，然后以dp为顶点左旋
+                                    reverseColor(dp);
+                                    rotateR(b);
+                                    rotateL(dp);
+                                } else if (b.right == null) {
+                                    //改变dp的颜色，然后先以b为顶点右旋，然后以dp为顶点左旋
+                                    reverseColor(dp);
+                                    rotateR(b);
                                     rotateL(dp);
                                 } else {
-                                    reverseColor(dp);
-                                    reverseColor(b);
+                                    //左子节点为空
+                                    //这里有两种方法，一种是直接左旋，另一种是改变b,b的右子节点，dp的颜色，然后左旋，这里采用第一种方法
+                                    rotateL(dp);
                                 }
-
                             } else {
-                                if (b.right != null) {
-                                    //先右旋再左旋
-                                    reverseColor(b.right);
-                                    rotateL(b);
-                                    rotateR(dp);
-                                } else if (b.left != null) {
+                                //如果dp是黑色,则b至少有一个子节点
+                                if (b.left != null && b.right != null) {
+                                    //改变b左子节点颜色，然后先以b为顶点右旋，然后以dp为顶点左旋
                                     reverseColor(b.left);
-                                    rotateR(dp);
+                                    rotateR(b);
+                                    rotateL(dp);
+                                } else if (b.right == null) {
+                                    //改变b的左子节点的颜色，然后先以b为顶点右旋，然后以dp为顶点左旋
+                                    reverseColor(b.left);
+                                    rotateR(b);
+                                    rotateL(dp);
                                 } else {
-                                    //todo:不存在这样的情况
+                                    //左子节点为空
+                                    //改变b的右子节点的颜色，然后以dp为顶点左旋
+                                    reverseColor(b.right);
+                                    rotateL(dp);
                                 }
                             }
                         }
                     } else {
+                        dp.right = null;
+                        current.parent = null;
+                        b = dp.left;
+                        //如果兄弟节点b是红色，那么b一定右两个黑色节点，并且dp一定是黑色
                         if (b.isRed) {
-                            //b此时肯定有两个黑色子节点，dp肯定是黑色，先以b为顶点右旋，再dp为顶点左旋
+                            //改变兄弟节点b和兄弟节点的左子节点的颜色，然后以b为顶点左旋，然后以dp为顶点右旋
                             reverseColor(b);
                             reverseColor(b.left);
-                            rotateR(b);
-                            rotateL(dp);
+                            rotateL(b);
+                            rotateR(dp);
                         } else {
+                            //如果兄弟节点是黑色,此时current和b都是黑色，注意我们插入的过程，此时dp一定存在
                             if (dp.isRed) {
-                                if (b.left != null) {
-                                    //先右旋再左旋
-                                    rotateR(b);
-                                    rotateL(dp);
-                                } else if (b.right != null) {
-                                    reverseColor(b);
-                                    reverseColor(b.right);
+                                //如果dp是红色，则b至少有一个子节点
+                                if (b.left != null && b.right != null) {
+                                    //改变dp颜色，然后先以b为顶点左旋，然后以dp为顶点右旋
+                                    reverseColor(dp);
+                                    rotateL(b);
+                                    rotateR(dp);
+                                } else if (b.right == null) {
+                                    //改变dp的颜色，然后先以b为顶点左旋，然后以dp为顶点右旋
+                                    reverseColor(dp);
+                                    rotateL(b);
                                     rotateR(dp);
                                 } else {
-                                    reverseColor(dp);
-                                    reverseColor(b);
+                                    //左子节点为空
+                                    //这里有两种方法，一种是直接右旋，另一种是改变b,b的左子节点，dp的颜色，然后右旋，这里采用第一种方法
+                                    rotateR(dp);
                                 }
-
                             } else {
-                                if (b.left != null) {
-                                    //先右旋再左旋
-                                    reverseColor(b.left);
-                                    rotateR(b);
-                                    rotateL(dp);
-                                } else if (b.right != null) {
+                                //如果dp是黑色,则b至少有一个子节点
+                                if (b.left != null && b.right != null) {
+                                    //改变b右子节点颜色，然后先以b为顶点左旋，然后以dp为顶点右旋
                                     reverseColor(b.right);
-                                    rotateL(dp);
+                                    rotateL(b);
+                                    rotateR(dp);
+                                } else if (b.right == null) {
+                                    //改变b的右子节点的颜色，然后先以b为顶点左旋，然后以dp为顶点右旋
+                                    reverseColor(b.right);
+                                    rotateL(b);
+                                    rotateR(dp);
                                 } else {
-                                    //todo:不存在这样的情况
+                                    //左子节点为空
+                                    //改变b的左子节点的颜色，然后以dp为顶点右旋
+                                    reverseColor(b.left);
+                                    rotateR(dp);
                                 }
                             }
                         }
                     }
                 }
-
             }
-            current.left = null;
-            current.right = null;
-            current.parent = null;
+
         } else {
-            //后继不为空时
-            //后继的父节点
+            //todo:后继不为空时
             Node sp = successor.parent;
-            //后继的祖父节点
-            Node gp = successor.parent;
-            //后继的左子节点
             Node sl = successor.left;
-            //后继的右子节点
             Node sr = successor.right;
 
-            //当后继的父节点和要删除的节点相等时，说明后继是删除节点的右子节点，此时后继没有右兄弟节点
-            if (sp == current) {
-                if (successor.isRed) {
-                    //如果后继是红色的，那么后继的左子节点和右子节点一定是null，此时后继节点的父节点一定是黑色的。
-                    //改变后继节点的颜色，然后嫁接回原位即可
-                    reverseColor(successor);
-                    if (current == root) {
-                        root = successor;
-                    } else {
-                        if (isLeftNodeOfParent(current)) {
-                            dp.left = successor;
-                        } else {
-                            dp.right = successor;
-                        }
-                    }
-                    successor.parent = dp;
-                    successor.left = dl;
-                    if (dl != null) {
-                        dl.parent = successor;
-                    }
-                    current.left = null;
-                    current.right = null;
-                    current.parent = null;
+            if (successor.isRed) {
+                //如果删除节点是红色,删除子节肯定没有子节点，而且被删除的节点肯定不是根，直接删掉就行，啥都不影响
+                if (isLeftNodeOfParent(successor)) {
+                    sp.left = null;
                 } else {
-                    //后继节点是黑色的情况
-
-                    if (sr != null) {
-                        //后继的右子节点不为空时，其颜色一定是红色,，把它补到原来的位置即可
-                        //当前删除的颜色和后继的颜色不一样时，变换后继的颜色。
-                        if (current.isRed != successor.isRed) {
-                            reverseColor(successor);
-                        }
-                        if (current == root) {
-                            root = successor;
-                        } else {
-                            if (isLeftNodeOfParent(current)) {
-                                dp.left = successor;
-                            } else {
-                                dp.right = successor;
-                            }
-                        }
-                        successor.parent = dp;
-                        successor.left = dl;
-                        //此时dl一定不为空
-                        dl.parent = successor;
-
-                        current.left = null;
-                        current.right = null;
-                        current.parent = null;
-                        reverseColor(sr);
+                    sp.right = null;
+                }
+                successor.parent = null;
+            } else {
+                //如果删除节点是黑色,并且current有左子节点（不可能有右子节点）
+                //如果删除节点的左子节点不为空，那么dl一定为红色，并且dl没有子节点，那么改变dl颜色后，把dl补上去即可
+                if (sl != null) {
+                    reverseColor(sl);
+                    if (isLeftNodeOfParent(successor)) {
+                        sp.left = sl;
                     } else {
-                        //后继的右子节点为空时
-                        //后继的兄弟节点
+                        sp.right = sl;
+                    }
+                    sl.parent = sp;
+                    successor.parent = null;
+                    successor.left = null;
+                } else {
+                    //如果删除节点没有子节点，先把current断开链接
+                    if (isLeftNodeOfParent(successor)) {
+                        sp.left = null;
+                        successor.parent = null;
+                        b = sp.right;
+                        //如果兄弟节点b是红色，那么b一定有两个黑色节点，并且dp一定是黑色
+                        if (b.isRed) {
+                            //改变兄弟节点b和兄弟节点的右子节点的颜色，然后以b为顶点右旋，然后以dp为顶点左旋
+                            reverseColor(b);
+                            reverseColor(b.right);
+                            rotateR(b);
+                            rotateL(sp);
+                        } else {
+                            //如果兄弟节点是黑色,此时current和b都是黑色，注意我们插入的过程，此时dp一定存在
+                            if (sp.isRed) {
+                                //如果dp是红色，则b至少有一个子节点
+                                if (b.left != null && b.right != null) {
+                                    //改变dp颜色，然后先以b为顶点右旋，然后以dp为顶点左旋
+                                    reverseColor(sp);
+                                    rotateR(b);
+                                    rotateL(sp);
+                                } else if (b.right == null) {
+                                    //改变dp的颜色，然后先以b为顶点右旋，然后以dp为顶点左旋
+                                    reverseColor(sp);
+                                    rotateR(b);
+                                    rotateL(sp);
+                                } else {
+                                    //左子节点为空
+                                    //这里有两种方法，一种是直接左旋，另一种是改变b,b的右子节点，dp的颜色，然后左旋，这里采用第一种方法
+                                    rotateL(sp);
+                                }
+                            } else {
+                                //如果dp是黑色,则b至少有一个子节点
+                                if (b.left != null && b.right != null) {
+                                    //改变b左子节点颜色，然后先以b为顶点右旋，然后以dp为顶点左旋
+                                    reverseColor(b.left);
+                                    rotateR(b);
+                                    rotateL(sp);
+                                } else if (b.right == null) {
+                                    //改变b的左子节点的颜色，然后先以b为顶点右旋，然后以dp为顶点左旋
+                                    reverseColor(b.left);
+                                    rotateR(b);
+                                    rotateL(sp);
+                                } else {
+                                    //左子节点为空
+                                    //改变b的右子节点的颜色，然后以dp为顶点左旋
+                                    reverseColor(b.right);
+                                    rotateL(sp);
+                                }
+                            }
+                        }
+                    } else {
+                        sp.right = null;
+                        successor.parent = null;
                         b = sp.left;
-                        if (current.isRed != successor.isRed) {
-                            reverseColor(successor);
-                        }
-                        if (current == root) {
-                            root = successor;
+                        //如果兄弟节点b是红色，那么b一定右两个黑色节点，并且dp一定是黑色
+                        if (b.isRed) {
+                            //改变兄弟节点b和兄弟节点的左子节点的颜色，然后以b为顶点左旋，然后以dp为顶点右旋
+                            reverseColor(b);
+                            reverseColor(b.left);
+                            rotateL(b);
+                            rotateR(sp);
                         } else {
-                            if (isLeftNodeOfParent(current)) {
-                                dp.left = successor;
+                            //如果兄弟节点是黑色,此时current和b都是黑色，注意我们插入的过程，此时dp一定存在
+                            if (sp.isRed) {
+                                //如果dp是红色，则b至少有一个子节点
+                                if (b.left != null && b.right != null) {
+                                    //改变dp颜色，然后先以b为顶点左旋，然后以dp为顶点右旋
+                                    reverseColor(sp);
+                                    rotateL(b);
+                                    rotateR(sp);
+                                } else if (b.right == null) {
+                                    //改变dp的颜色，然后先以b为顶点左旋，然后以dp为顶点右旋
+                                    reverseColor(sp);
+                                    rotateL(b);
+                                    rotateR(sp);
+                                } else {
+                                    //左子节点为空
+                                    //这里有两种方法，一种是直接右旋，另一种是改变b,b的左子节点，dp的颜色，然后右旋，这里采用第一种方法
+                                    rotateR(sp);
+                                }
                             } else {
-                                dp.right = successor;
+                                //如果dp是黑色,则b至少有一个子节点
+                                if (b.left != null && b.right != null) {
+                                    //改变b右子节点颜色，然后先以b为顶点左旋，然后以dp为顶点右旋
+                                    reverseColor(b.right);
+                                    rotateL(b);
+                                    rotateR(sp);
+                                } else if (b.right == null) {
+                                    //改变b的右子节点的颜色，然后先以b为顶点左旋，然后以dp为顶点右旋
+                                    reverseColor(b.right);
+                                    rotateL(b);
+                                    rotateR(sp);
+                                } else {
+                                    //左子节点为空
+                                    //改变b的左子节点的颜色，然后以dp为顶点右旋
+                                    reverseColor(b.left);
+                                    rotateR(sp);
+                                }
                             }
                         }
-                        successor.parent = dp;
-                        successor.left = dl;
-                        //此时b一定不为空,b且为黑色的且b=dl
-                        b.parent = successor;
-                        current.left = null;
-                        current.right = null;
-                        current.parent = null;
-
-                        if (b.right != null) {
-                            //如果被删除节点是黑色的
-                            if (current.isRed = true) {
-                                reverseColor(b);
-                                reverseColor(b.right);
-                                rotateL(b);
-                                rotateR(successor);
-                            } else {
-                                reverseColor(b.right);
-                                rotateL(b);
-                                rotateR(successor);
-                            }
-
-                        } else if (b.left != null) {
-                            if (current.isRed == true) {
-                                rotateR(successor);
-                            } else {
-                                reverseColor(b);
-                                reverseColor(b.left);
-                                rotateR(successor);
-                            }
-                        } else {
-                            if (current.isRed == true) {
-                                reverseColor(successor);
-                                reverseColor(b);
-                            } else {
-                                //如果是删除的是黑色节点，以删除节点的父节点为顶点做一次右旋，并把b和dp颜色改变
-                                reverseColor(b);
-                                reverseColor(dp);
-                                rotateR(dp);
-                            }
-                        }
-
                     }
                 }
-            } else {
-                //
             }
 
         }
