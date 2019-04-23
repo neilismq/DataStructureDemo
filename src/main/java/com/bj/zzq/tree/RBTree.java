@@ -1,9 +1,12 @@
 package com.bj.zzq.tree;
 
 import com.sun.deploy.net.cookie.CookieUnavailableException;
+import sun.plugin.com.BeanCustomizer;
 
 import java.util.HashMap;
+import java.util.IllegalFormatCodePointException;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 /**
  * @Author: zhaozhiqiang
@@ -175,7 +178,7 @@ public class RBTree {
      */
     public Node findSuccessor(Node node) {
         Node current = node.right;
-        while (current.left != null) {
+        while (current != null && current.left != null) {
             current = current.left;
         }
         return current;
@@ -202,51 +205,246 @@ public class RBTree {
         Node successor = findSuccessor(current);
         //删除节点的左子节点
         Node dl = current.left;
+        //删除节点的右子节点
+        Node dr = current.right;
         //删除节点的父节点
         Node dp = current.parent;
+        //后继节点的兄弟节点
+        Node b = null;
         //后继为空时，也就是删除节点没有右子节点
         if (successor == null) {
             //如果删除的是根
             if (current == root) {
-                if (dl != null) {
-                    dl.isRed = false;
-                    dl.parent = null;
-                }
                 root = dl;
             } else {
-                //删除节一定是黑色，且它的左子节点一定是红色，只需要把红色节点变为黑色，然后往上替换删除节点就OK
-                //如果删除节点是父节点的左子节点
+                //如果后继为空且删除的不是根
                 if (isLeftNodeOfParent(current)) {
                     dp.left = dl;
+                    b = dp.right;
                 } else {
                     dp.right = dl;
+                    b = dp.left;
                 }
-                if (dl != null) {
-                    dl.isRed = false;
-                    dl.parent = dp;
-                }
-                current.left = null;
-                current.parent = null;
             }
+
+            if (dl != null) {
+                //如果删除节点的左子节点不为空，那么它必定是黑色的，且dl是红色的。并且dl是没有子节点的。此时只需要把dl替换current即可
+                reverseColor(dl);
+                dl.parent = dp;
+            } else {
+                //如果删除节点的两个子节点都是空
+                //如果当前被删除节点是黑色的
+
+                if (!current.isRed && dl != root) {
+                    reverseColor(dp);
+                    if (isLeftNodeOfParent(b)) {
+                        if (b.isRed) {
+                            //b此时肯定有两个黑色子节点，dp肯定是黑色，先以b为顶点右旋，再dp为顶点左旋
+                            reverseColor(b);
+                            reverseColor(b.right);
+                            rotateR(b);
+                            rotateL(dp);
+                        } else {
+                            if (dp.isRed) {
+                                if (b.right != null) {
+                                    //先右旋再左旋
+                                    rotateL(b);
+                                    rotateR(dp);
+                                } else if (b.left != null) {
+                                    reverseColor(b);
+                                    reverseColor(b.left);
+                                    rotateL(dp);
+                                } else {
+                                    reverseColor(dp);
+                                    reverseColor(b);
+                                }
+
+                            } else {
+                                if (b.right != null) {
+                                    //先右旋再左旋
+                                    reverseColor(b.right);
+                                    rotateL(b);
+                                    rotateR(dp);
+                                } else if (b.left != null) {
+                                    reverseColor(b.left);
+                                    rotateR(dp);
+                                } else {
+                                    //todo:不存在这样的情况
+                                }
+                            }
+                        }
+                    } else {
+                        if (b.isRed) {
+                            //b此时肯定有两个黑色子节点，dp肯定是黑色，先以b为顶点右旋，再dp为顶点左旋
+                            reverseColor(b);
+                            reverseColor(b.left);
+                            rotateR(b);
+                            rotateL(dp);
+                        } else {
+                            if (dp.isRed) {
+                                if (b.left != null) {
+                                    //先右旋再左旋
+                                    rotateR(b);
+                                    rotateL(dp);
+                                } else if (b.right != null) {
+                                    reverseColor(b);
+                                    reverseColor(b.right);
+                                    rotateR(dp);
+                                } else {
+                                    reverseColor(dp);
+                                    reverseColor(b);
+                                }
+
+                            } else {
+                                if (b.left != null) {
+                                    //先右旋再左旋
+                                    reverseColor(b.left);
+                                    rotateR(b);
+                                    rotateL(dp);
+                                } else if (b.right != null) {
+                                    reverseColor(b.right);
+                                    rotateL(dp);
+                                } else {
+                                    //todo:不存在这样的情况
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+            current.left = null;
+            current.right = null;
+            current.parent = null;
         } else {
             //后继不为空时
             //后继的父节点
             Node sp = successor.parent;
+            //后继的祖父节点
+            Node gp = successor.parent;
             //后继的左子节点
             Node sl = successor.left;
             //后继的右子节点
             Node sr = successor.right;
-            //当后继的父节点和要删除的节相等时，说明后继是删除节点的右子节点，此时后继没有兄弟节点，只需要把
+
+            //当后继的父节点和要删除的节点相等时，说明后继是删除节点的右子节点，此时后继没有右兄弟节点
             if (sp == current) {
+                if (successor.isRed) {
+                    //如果后继是红色的，那么后继的左子节点和右子节点一定是null，此时后继节点的父节点一定是黑色的。
+                    //改变后继节点的颜色，然后嫁接回原位即可
+                    reverseColor(successor);
+                    if (current == root) {
+                        root = successor;
+                    } else {
+                        if (isLeftNodeOfParent(current)) {
+                            dp.left = successor;
+                        } else {
+                            dp.right = successor;
+                        }
+                    }
+                    successor.parent = dp;
+                    successor.left = dl;
+                    if (dl != null) {
+                        dl.parent = successor;
+                    }
+                    current.left = null;
+                    current.right = null;
+                    current.parent = null;
+                } else {
+                    //后继节点是黑色的情况
 
+                    if (sr != null) {
+                        //后继的右子节点不为空时，其颜色一定是红色,，把它补到原来的位置即可
+                        //当前删除的颜色和后继的颜色不一样时，变换后继的颜色。
+                        if (current.isRed != successor.isRed) {
+                            reverseColor(successor);
+                        }
+                        if (current == root) {
+                            root = successor;
+                        } else {
+                            if (isLeftNodeOfParent(current)) {
+                                dp.left = successor;
+                            } else {
+                                dp.right = successor;
+                            }
+                        }
+                        successor.parent = dp;
+                        successor.left = dl;
+                        //此时dl一定不为空
+                        dl.parent = successor;
+
+                        current.left = null;
+                        current.right = null;
+                        current.parent = null;
+                        reverseColor(sr);
+                    } else {
+                        //后继的右子节点为空时
+                        //后继的兄弟节点
+                        b = sp.left;
+                        if (current.isRed != successor.isRed) {
+                            reverseColor(successor);
+                        }
+                        if (current == root) {
+                            root = successor;
+                        } else {
+                            if (isLeftNodeOfParent(current)) {
+                                dp.left = successor;
+                            } else {
+                                dp.right = successor;
+                            }
+                        }
+                        successor.parent = dp;
+                        successor.left = dl;
+                        //此时b一定不为空,b且为黑色的且b=dl
+                        b.parent = successor;
+                        current.left = null;
+                        current.right = null;
+                        current.parent = null;
+
+                        if (b.right != null) {
+                            //如果被删除节点是黑色的
+                            if (current.isRed = true) {
+                                reverseColor(b);
+                                reverseColor(b.right);
+                                rotateL(b);
+                                rotateR(successor);
+                            } else {
+                                reverseColor(b.right);
+                                rotateL(b);
+                                rotateR(successor);
+                            }
+
+                        } else if (b.left != null) {
+                            if (current.isRed == true) {
+                                rotateR(successor);
+                            } else {
+                                reverseColor(b);
+                                reverseColor(b.left);
+                                rotateR(successor);
+                            }
+                        } else {
+                            if (current.isRed == true) {
+                                reverseColor(successor);
+                                reverseColor(b);
+                            } else {
+                                //如果是删除的是黑色节点，以删除节点的父节点为顶点做一次右旋，并把b和dp颜色改变
+                                reverseColor(b);
+                                reverseColor(dp);
+                                rotateR(dp);
+                            }
+                        }
+
+                    }
+                }
+            } else {
+                //
             }
-            //后继节点的兄弟节点
-            Node b = null;
+
         }
-
-
+        return true;
     }
 
+    //private boolean
 
     /**
      * 交换颜色。只有当当前节点是黑色，并且两个子节点都是红色时，将当前节点变为红色，两个子节点变为黑色。
@@ -411,20 +609,38 @@ public class RBTree {
         RBTree tree = new RBTree();
         tree.insert(new Node(50));
         tree.displayTree();
-        tree.insert(new Node(25));
+        tree.insert(new Node(70));
         tree.displayTree();
-        tree.insert(new Node(75));
+        tree.insert(new Node(60));
         tree.displayTree();
-        tree.insert(new Node(12));
+//        tree.insert(new Node(80));
+//        tree.displayTree();
+        tree.insert(new Node(65));
         tree.displayTree();
-        tree.insert(new Node(18));
+//        tree.insert(new Node(30));
+//        tree.displayTree();
+        tree.delete(50);
         tree.displayTree();
-        tree.insert(new Node(15));
-        tree.displayTree();
-        tree.insert(new Node(11));
-        tree.displayTree();
-        tree.insert(new Node(10));
-        tree.displayTree();
+//        tree.insert(new Node(25));
+//        tree.displayTree();
+//        tree.insert(new Node(75));
+//        tree.displayTree();
+//        tree.insert(new Node(10));
+//        tree.displayTree();
+//        tree.insert(new Node(30));
+//        tree.displayTree();
+//        tree.insert(new Node(24));
+//        tree.displayTree();
+//        tree.insert(new Node(8));
+//        tree.displayTree();
+//        tree.insert(new Node(9));
+//        tree.displayTree();
+//        tree.insert(new Node(6));
+//        tree.displayTree();
+//        tree.insert(new Node(7));
+//        tree.displayTree();
+//        tree.insert(new Node(5));
+//        tree.displayTree();
 
 
     }
