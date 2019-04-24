@@ -17,6 +17,8 @@ public class Test {
         }
 
 
+
+
         System.out.println("test data:"); //测试数据打印
         for (int i = 0; i < data.length; i++) {
             System.out.printf("%s ", bitString((byte) data[i]));
